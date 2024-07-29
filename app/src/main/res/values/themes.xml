@@ -8,6 +8,6 @@
 
     <style name="Theme.NewsApp" parent="Base.Theme.NewsApp" />
     <style name="App.Custom.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
-        <item name="android:color">@color/yellow</item>
+        <item name="android:color">#DB80EB</item>
     </style>
 </resources>
