@@ -7,6 +7,8 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.newsapp.R
+import com.example.newsapp.Util.Constants
 import com.example.newsapp.databinding.ItemNewsBinding
 import com.example.newsapp.models.Article
 import com.example.newsapp.screens.HeadlinesFragmentDirections
@@ -28,25 +30,35 @@ class NewsAdapter : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
     val differ = AsyncListDiffer(this, differCallback)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
-       val binding = ItemNewsBinding.inflate(LayoutInflater.from(parent.context),parent,false)
+        val binding = ItemNewsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return NewsViewHolder(binding)
     }
 
     override fun getItemCount(): Int {
-     return differ.currentList.size
+        return differ.currentList.size
     }
 
+    private var onItemClickListener: ((Article?) -> Unit)? = null
+
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
-       val currentNews = differ.currentList[position]
-        Glide.with(holder.binding.articleImage.context).load(currentNews.urlToImage).into(holder.binding.articleImage)
-        holder.binding.articleTitle.text=currentNews.title
-        holder.binding.articleSource.text= currentNews.source?.name
-        holder.binding.articleDescription.text=currentNews.description
-        holder.binding.articleDateTime.text=currentNews.publishedAt
+        val currentNews = differ.currentList[position]
+        Glide.with(holder.binding.articleImage.context)
+            .load(currentNews.urlToImage ?: R.drawable.img)
+            .into(holder.binding.articleImage)
+        holder.binding.articleTitle.text = currentNews.title
+        holder.binding.articleSource.text = currentNews.source?.name
+        holder.binding.articleDescription.text = currentNews.description ?: "Description..."
+        holder.binding.articleDateTime.text =
+            Constants.convertDateTime(currentNews.publishedAt ?: " ")
 
         holder.itemView.setOnClickListener {
-            val action=HeadlinesFragmentDirections.actionHeadlinesFragmentToArticleFragment(currentNews)
-            it.findNavController().navigate(action)
+            onItemClickListener?.let {
+                it(currentNews!!)
+            }
         }
+    }
+
+    fun setOnItemClickListener(listener: (Article?) -> Unit) {
+        onItemClickListener = listener
     }
 }

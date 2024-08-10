@@ -35,7 +35,8 @@
         android:label="ArticleFragment" >
         <argument
             android:name="article"
-            app:argType="com.example.newsapp.models.Article"/>
+            app:argType="com.example.newsapp.models.Article"
+            app:nullable="true" />
 
 
     </fragment>

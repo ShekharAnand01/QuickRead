@@ -15,8 +15,9 @@
         android:theme="@style/Theme.NewsApp"
         tools:targetApi="31">
         <activity
-            android:name=".NewsActivity"
-            android:exported="true">
+            android:name=".screens.NewsActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
