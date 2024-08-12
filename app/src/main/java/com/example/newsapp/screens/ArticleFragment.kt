@@ -60,6 +60,8 @@ class ArticleFragment : Fragment() {
             Snackbar.make(view, "Added to favourites", Snackbar.LENGTH_SHORT).show()
         }
 
+
+
     }
 
     override fun onDestroyView() {

@@ -21,6 +21,11 @@ class NewsViewModel(app: Application, private val repo: NewsRepo) : AndroidViewM
     var headlinesPage = 1
     private var headlinesResponse: NewsResponse? = null
 
+
+    val categorynews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
+    var categorynewsPage = 1
+    var categoryResponse: NewsResponse? = null
+
     val searchNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
     var searchNewsPage = 1
     private var searchNewsResponse: NewsResponse? = null
@@ -49,6 +54,24 @@ class NewsViewModel(app: Application, private val repo: NewsRepo) : AndroidViewM
         return Resource.Error(response.message())
     }
 
+    private fun handleCategoryResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
+        if (response.isSuccessful) {
+            response.body()?.let { resultResponse ->
+                categorynewsPage++
+                if (categoryResponse == null) {
+                    categoryResponse = resultResponse
+                } else {
+                    val oldArticle = categoryResponse?.articles
+                    val newArticles = resultResponse.articles
+                    oldArticle?.addAll(newArticles)
+                }
+                return Resource.Success(categoryResponse ?: resultResponse)
+            }
+
+        }
+        return Resource.Error(response.message())
+    }
+
     private fun handleSearchResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
         if (response.isSuccessful) {
             response.body()?.let { resultResponse ->
@@ -68,10 +91,12 @@ class NewsViewModel(app: Application, private val repo: NewsRepo) : AndroidViewM
         return Resource.Error(response.message())
     }
 
-    fun addToFavorites(article: Article) =
-        viewModelScope.launch {
+    fun addToFavorites(article: Article) = viewModelScope.launch {
+        val isArticleInFavorites = repo.isArticleInFavorites(article)
+        if (!isArticleInFavorites) {
             repo.insert(article)
         }
+    }
 
     fun delete(article: Article) =
         viewModelScope.launch {
@@ -128,6 +153,23 @@ class NewsViewModel(app: Application, private val repo: NewsRepo) : AndroidViewM
         }
     }
 
+    private suspend fun safeCategoryNewsCall(category: String) {
+        categorynews.postValue(Resource.Loading())
+        try {
+            if (internetConnection(this.getApplication())) {
+                val response = repo.getCategoryNews("us", categorynewsPage,category)
+                categorynews.postValue(handleCategoryResponse(response))
+            } else {
+                categorynews.postValue(Resource.Error("No internet connection"))
+            }
+        } catch (t: Throwable) {
+            when (t) {
+                is IOException -> categorynews.postValue(Resource.Error("Network Failure"))
+                else -> categorynews.postValue(Resource.Error("Conversion Error"))
+            }
+        }
+    }
+
     fun getHeadlines(countryCode: String) = viewModelScope.launch {
         headlinesInternet(countryCode)
     }
@@ -135,5 +177,10 @@ class NewsViewModel(app: Application, private val repo: NewsRepo) : AndroidViewM
     fun searchNews(q: String) = viewModelScope.launch {
         searchInternet(q)
     }
+
+    fun getNewsByCategory(category: String) = viewModelScope.launch {
+        safeCategoryNewsCall(category)
+    }
+
 
 }

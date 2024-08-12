@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">News App</string>
+    <string name="app_name">QuickRead</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="save">save</string>
@@ -14,4 +14,7 @@
     <string name="technology">technology</string>
     <string name="search">Search.</string>
     <string name="search_news">Search news...</string>
+    <string name="read_the_world_today">Read the world today</string>
+    <string name="news_app">News App</string>
+    <string name="categories">Categories.</string>
 </resources>

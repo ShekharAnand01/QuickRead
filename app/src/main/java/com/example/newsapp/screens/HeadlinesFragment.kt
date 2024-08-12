@@ -3,6 +3,7 @@ package com.example.newsapp.screens
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -59,12 +60,13 @@ class HeadlinesFragment : Fragment() {
                 article?.url?.let {
                     val action =
                         HeadlinesFragmentDirections.actionHeadlinesFragmentToArticleFragment(article)
+                    Log.d("Navigation", "Navigating with action: $action")
                     findNavController().navigate(action)
                 } ?: run {
                     Toast.makeText(activity, "Article URL is missing", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(activity, "Navigation failed: ${e.message}", Toast.LENGTH_SHORT)
+                Toast.makeText(activity, "Article not found", Toast.LENGTH_SHORT)
                     .show()
             }
         }
@@ -99,7 +101,10 @@ class HeadlinesFragment : Fragment() {
 
         }
 
-        retryButton.setOnClickListener {
+
+
+
+        binding.itemHeadlinesError.retryButton.setOnClickListener {
             viewModel.getHeadlines("us")
         }
 
@@ -109,6 +114,7 @@ class HeadlinesFragment : Fragment() {
     var isLoading = false
     var isLastPage = false
     var isScrolling = false
+
 
     private fun hideProgressBar() {
         binding.paginationProgressBar.visibility = View.INVISIBLE
@@ -121,13 +127,15 @@ class HeadlinesFragment : Fragment() {
     }
 
     private fun hideErrorMessage() {
-        itemHeadLinesError.visibility = View.INVISIBLE
+        itemHeadLinesError.visibility = View.GONE
+        binding.recyclerHeadlines.visibility = View.VISIBLE
         isError = false
 
     }
 
     private fun showErrorMessage(message: String) {
         itemHeadLinesError.visibility = View.VISIBLE
+        binding.recyclerHeadlines.visibility = View.INVISIBLE
         errorText.text = message
         isError = true
     }

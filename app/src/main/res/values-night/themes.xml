@@ -9,4 +9,15 @@
     <style name="App.Custom.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
         <item name="android:color">#DB80EB</item>
     </style>
+
+    <style name="progressbar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
+
+    <style name="progressBarStyle" parent="@style/Widget.AppCompat.ProgressBar.Horizontal">
+    </style>
+
 </resources>

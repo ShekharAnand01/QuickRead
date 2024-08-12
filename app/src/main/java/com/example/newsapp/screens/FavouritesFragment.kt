@@ -45,7 +45,7 @@ class FavouritesFragment : Fragment() {
                     Toast.makeText(activity, "Article URL is missing", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(activity, "Navigation failed: ${e.message}", Toast.LENGTH_SHORT)
+                Toast.makeText(activity, "Article not found", Toast.LENGTH_SHORT)
                     .show()
             }
         }

@@ -3,10 +3,16 @@
     <item android:id="@+id/headlinesFragment"
         android:title="Headlines"
         android:icon="@drawable/baseline_view_headline_24" />
-    <item android:id="@+id/favouritesFragment"
-        android:title="Favourites"
-        android:icon="@drawable/baseline_favorite_24" />
+
+    <item android:id="@+id/categoryFragment"
+        android:title="Category"
+        android:icon="@drawable/baseline_category_24" />
+
     <item android:id="@+id/searchFragment"
         android:title="Search"
         android:icon="@drawable/baseline_search_24" />
+
+    <item android:id="@+id/favouritesFragment"
+        android:title="Favourites"
+        android:icon="@drawable/baseline_favorite_24" />
 </menu>

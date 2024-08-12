@@ -1,5 +1,6 @@
 package com.example.newsapp.screens
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -12,46 +13,42 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
-import androidx.core.widget.addTextChangedListener
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.newsapp.R
 import com.example.newsapp.Util.Constants
-import com.example.newsapp.Util.Constants.Companion.SEARCH_NEWS_TIME_DELAY
 import com.example.newsapp.Util.Resource
 import com.example.newsapp.adapters.NewsAdapter
-import com.example.newsapp.databinding.FragmentSearchBinding
+import com.example.newsapp.databinding.FragmentCategoryBinding
+import com.example.newsapp.databinding.FragmentHeadlinesBinding
 import com.example.newsapp.viewmodel.NewsViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 
-class SearchFragment : Fragment() {
-    private var _binding: FragmentSearchBinding? = null
+class CategoryFragment : Fragment() {
+    private var _binding: FragmentCategoryBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: NewsViewModel
     private lateinit var newsAdapter: NewsAdapter
     private lateinit var retryButton: Button
     private lateinit var errorText: TextView
-    private lateinit var itemSearchError: CardView
+    private lateinit var itemHeadLinesError: CardView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        _binding = FragmentCategoryBinding.inflate(inflater, container, false)
         return binding.root
     }
 
+    @SuppressLint("InflateParams")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = (activity as NewsActivity).viewModel
         setUpAdapter()
 
-        itemSearchError = view.findViewById(R.id.itemSearchError)
+        itemHeadLinesError = view.findViewById(R.id.itemHeadlinesError)
         val inflater =
             requireContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view: View = inflater.inflate(R.layout.item_error, null)
@@ -63,8 +60,8 @@ class SearchFragment : Fragment() {
             try {
                 article?.url?.let {
                     val action =
-                        SearchFragmentDirections.actionSearchFragmentToArticleFragment(article)
-                    Log.e("Navigation", "Navigating with action: $action")
+                        CategoryFragmentDirections.actionCategoryFragmentToArticleFragment(article)
+                    Log.d("Navigation", "Navigating with action: $action")
                     findNavController().navigate(action)
                 } ?: run {
                     Toast.makeText(activity, "Article URL is missing", Toast.LENGTH_SHORT).show()
@@ -75,20 +72,7 @@ class SearchFragment : Fragment() {
             }
         }
 
-        var job: Job? = null
-        binding.searchEdit.addTextChangedListener { editable ->
-            job?.cancel()
-            job = MainScope().launch {
-                delay(SEARCH_NEWS_TIME_DELAY)
-                editable?.let {
-                    if (editable.toString().isNotEmpty()) {
-                        viewModel.searchNews(editable.toString())
-                    }
-                }
-            }
-        }
-
-        viewModel.searchNews.observe(viewLifecycleOwner) { response ->
+        viewModel.categorynews.observe(viewLifecycleOwner) { response ->
             when (response) {
                 is Resource.Success<*> -> {
                     hideProgressBar()
@@ -96,11 +80,10 @@ class SearchFragment : Fragment() {
                     response.data?.let { articleResponse ->
                         newsAdapter.differ.submitList(articleResponse.articles.toList())
                         val totalPages = articleResponse.totalResults / Constants.QUERY_PAGE_SIZE
-                        isLastPage = viewModel.searchNewsPage == totalPages + 2
+                        isLastPage = viewModel.categorynewsPage == totalPages + 2
                         if (isLastPage) {
-                            binding.recyclerSearch.setPadding(0, 0, 0, 0)
+                            binding.recyclerHeadlines.setPadding(0, 0, 0, 0)
                         }
-
                     }
                 }
 
@@ -116,17 +99,21 @@ class SearchFragment : Fragment() {
                     showProgressBar()
                 }
             }
-
         }
 
-        binding.itemSearchError.retryButton.setOnClickListener {
-            if (binding.searchEdit.text.toString().isNotEmpty()) {
-                viewModel.searchNews(binding.searchEdit.text.toString())
-            } else {
-                hideErrorMessage()
-            }
-        }
+        binding.business.setOnClickListener { fetchCategoryNews("business") }
+        binding.entertainment.setOnClickListener { fetchCategoryNews("entertainment") }
+        binding.health.setOnClickListener { fetchCategoryNews("health") }
+        binding.science.setOnClickListener { fetchCategoryNews("science") }
+        binding.sports.setOnClickListener { fetchCategoryNews("sports") }
+        binding.technology.setOnClickListener { fetchCategoryNews("technology") }
 
+
+
+        binding.itemHeadlinesError.retryButton.setOnClickListener {
+
+            viewModel.getNewsByCategory("general")
+        }
 
     }
 
@@ -135,9 +122,14 @@ class SearchFragment : Fragment() {
     var isLastPage = false
     var isScrolling = false
 
+    private fun fetchCategoryNews(category: String) {
+        viewModel.categorynewsPage = 1
+        viewModel.categoryResponse = null
+        viewModel.getNewsByCategory(category)
+    }
+
     private fun hideProgressBar() {
         binding.paginationProgressBar.visibility = View.INVISIBLE
-        binding.recyclerSearch.visibility = View.INVISIBLE
         isLoading = false
     }
 
@@ -147,14 +139,15 @@ class SearchFragment : Fragment() {
     }
 
     private fun hideErrorMessage() {
-        itemSearchError.visibility = View.INVISIBLE
-        binding.recyclerSearch.visibility = View.VISIBLE
+        itemHeadLinesError.visibility = View.GONE
+        binding.recyclerHeadlines.visibility = View.VISIBLE
         isError = false
 
     }
 
     private fun showErrorMessage(message: String) {
-        itemSearchError.visibility = View.VISIBLE
+        itemHeadLinesError.visibility = View.VISIBLE
+        binding.recyclerHeadlines.visibility = View.INVISIBLE
         errorText.text = message
         isError = true
     }
@@ -175,7 +168,7 @@ class SearchFragment : Fragment() {
             val shouldPaginate =
                 isNoError && isNotLoadingAndNotLastPage && isAtLastItem && isNotAtBeginning && isTotalMoreThanVisible && isScrolling
             if (shouldPaginate) {
-                viewModel.searchNews(binding.searchEdit.text.toString())
+                viewModel.getNewsByCategory("")
                 isScrolling = false
             }
         }
@@ -190,10 +183,10 @@ class SearchFragment : Fragment() {
 
     private fun setUpAdapter() {
         newsAdapter = NewsAdapter()
-        binding.recyclerSearch.apply {
+        binding.recyclerHeadlines.apply {
             adapter = newsAdapter
             layoutManager = LinearLayoutManager(activity)
-            addOnScrollListener(this@SearchFragment.scrollListener)
+            addOnScrollListener(this@CategoryFragment.scrollListener)
 
         }
     }
@@ -204,3 +197,6 @@ class SearchFragment : Fragment() {
         _binding = null
     }
 }
+
+
+
