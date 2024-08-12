@@ -1,5 +1,6 @@
 package com.example.newsapp.screens
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.navigation.fragment.navArgs
 import com.example.newsapp.databinding.FragmentArticleBinding
+import com.example.newsapp.models.Article
 import com.example.newsapp.viewmodel.NewsViewModel
 import com.google.android.material.snackbar.Snackbar
 
@@ -60,8 +62,23 @@ class ArticleFragment : Fragment() {
             Snackbar.make(view, "Added to favourites", Snackbar.LENGTH_SHORT).show()
         }
 
+        binding.fabShare.setOnClickListener {
+            if (article != null) {
+                shareArticle(article)
+            }
+        }
 
 
+
+    }
+
+    private fun shareArticle(article: Article) {
+        val shareIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, "Check out this news article: ${article.url}")
+            type = "text/plain"
+        }
+        startActivity(Intent.createChooser(shareIntent, "Share via"))
     }
 
     override fun onDestroyView() {

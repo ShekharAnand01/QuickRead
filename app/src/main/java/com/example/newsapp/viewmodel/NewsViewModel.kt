@@ -34,6 +34,7 @@ class NewsViewModel(app: Application, private val repo: NewsRepo) : AndroidViewM
 
     init {
         getHeadlines("us")
+        getNewsByCategory("general")
     }
 
     private fun handleHeadlinesResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
