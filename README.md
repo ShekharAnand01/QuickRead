@@ -21,7 +21,8 @@ QuickRead is an Android application that delivers the latest news articles in va
 
 ## Screenshots
 
-*(Include relevant screenshots here)*
+### Home Screen
+![Home Screen](wallpaperflare.com wallpaper.png)
 
 ## Installation
 
