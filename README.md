@@ -19,6 +19,10 @@ QuickRead is an Android application that delivers the latest news articles in va
 - **Coroutines**: For asynchronous programming, ensuring smooth performance during network operations.
 - **Glide**: Efficient image loading and caching for article thumbnails.
 
+## Screenshots
+
+*(Include relevant screenshots here)*
+
 ## Installation
 
 1. Clone the repository:
@@ -31,10 +35,6 @@ QuickRead is an Android application that delivers the latest news articles in va
 3. Sync the project with Gradle files.
 
 4. Build and run the project.
-
-## Screenshots
-
-*(Include relevant screenshots here)*
 
 ## Contributing
 
