@@ -50,6 +50,7 @@ class SearchFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = (activity as NewsActivity).viewModel
         setUpAdapter()
+        binding.searchEdit.requestFocus()
 
         itemSearchError = view.findViewById(R.id.itemSearchError)
         val inflater =
