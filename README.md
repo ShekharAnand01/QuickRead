@@ -21,8 +21,25 @@ QuickRead is an Android application that delivers the latest news articles in va
 
 ## Screenshots
 
-### Home Screen
-![Screenshot_2024-09-25-17-12-29-70_2e18505db57828d8c81494444ceb4645](https://github.com/user-attachments/assets/73cd1073-e043-45d2-b295-5d2b1e79126e)
+<p align="center">
+  <figure style="display:inline-block; margin: 20px;">
+    <img src="https://github.com/user-attachments/assets/73cd1073-e043-45d2-b295-5d2b1e79126e" alt="Home Screen" width="300" height="600">
+   
+  </figure>
+  <figure style="display:inline-block; margin: 20px;">
+    <img src="https://github.com/user-attachments/assets/989c2160-b530-49e3-92b3-562ed91596f3" alt="Category Screen" width="300" height="600">
+  </figure>
+  <figure style="display:inline-block; margin: 20px;">
+    <img src="https://github.com/user-attachments/assets/bc5a2e2e-ff94-4f56-af15-51b45016ba10" alt="Search Screen" width="300" height="600">
+  </figure>
+   <figure style="display:inline-block; margin: 20px;">
+    <img src="https://github.com/user-attachments/assets/db329338-0984-4f54-b7e5-3cb2978e6165" alt="Favourites Screen" width="300" height="600">
+  </figure>
+   <figure style="display:inline-block; margin: 20px;">
+    <img src="https://github.com/user-attachments/assets/66085540-fd43-4bfc-bdaf-a444a4441843" alt="Article Screen" width="300" height="600">
+  </figure>
+</p>
+
 
 
 
